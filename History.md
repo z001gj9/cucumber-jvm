@@ -1,5 +1,6 @@
 ## [2.0.0-SNAPSHOT](https://github.com/cucumber/cucumber-jvm/compare/v1.2.5...master) (In Git)
 
+* [Build] Use 1.7 as the source and target level for compilation ([#1147](https://github.com/cucumber/cucumber-jvm/pull/1147) M.P. Korstanje)
 * [Core] Show explicit error message when field name missed in table header ([#1014](https://github.com/cucumber/cucumber-jvm/pull/1014) Mykola Gurov) 
 * [Examples] Properly quit selenium in webbit examples ([#1146](https://github.com/cucumber/cucumber-jvm/pull/1146) Alberto Scotto)
 * [JUnit] Use AssumptionFailed to mark scenarios/steps as skipped ([#1142](https://github.com/cucumber/cucumber-jvm/pull/1142) Björn Rasmusson)
