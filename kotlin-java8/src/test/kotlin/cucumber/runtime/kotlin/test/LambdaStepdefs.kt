@@ -33,6 +33,21 @@ class LambdaStepdefs : En {
             assertEquals("hello", localState)
         }
 
+            fun executeFunction() {
+                print("Hello 1")
+
+            }
+
+        Given("^A statement with a function$", ::executeFunction)
+
+        fun executeFunction(i : String) {
+            print("Hello 2")
+        }
+
+        Given("^A statement with a function and and argument(\\d+)$", ::executeFunction)
+
+
+
         Given("^A statement with a body expression$") { assertTrue(true) }
 
         Given("^A statement with a simple match$", { -> assertTrue(true) })

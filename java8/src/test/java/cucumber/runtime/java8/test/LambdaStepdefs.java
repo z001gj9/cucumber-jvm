@@ -67,6 +67,8 @@ public class LambdaStepdefs implements En {
         Given("^A method reference with an argument (\\d+)$", this::methodWithAnArgument);
         Given("^A constructor reference with an argument (.*)$", Contact::new);
         Given("^A static method reference with an argument (\\d+)$", LambdaStepdefs::staticMethodWithAnArgument);
+        Given("^A synthetic method$", PrivateContract::syntheticFunction);
+        Given("^A synthetic constructor$", PrivateContract::new);
 
         Given("^A method reference to an arbitrary object of a particular type (\\d+)$", Contact::call);
         Given("^A method reference to an arbitrary object of a particular type (.*) with argument (.*)$", Contact::update);
@@ -111,5 +113,15 @@ public class LambdaStepdefs implements En {
         }
     }
 
+    private static class PrivateContract {
+
+        private PrivateContract(){
+
+        }
+
+        private static void syntheticFunction(){
+
+        }
+    }
 
 }

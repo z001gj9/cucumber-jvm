@@ -23,3 +23,7 @@ Feature: Kotlin
       | first  | last     |
       | Aslak  | Hellesøy |
       | Donald | Duck     |
+
+  Scenario: Functions
+    Given A statement with a function
+    Given A statement with a function and argument 42

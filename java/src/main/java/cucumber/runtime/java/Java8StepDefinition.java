@@ -62,15 +62,28 @@ public class Java8StepDefinition implements StepDefinition {
     private Method getAcceptMethod(Class<? extends StepdefBody> bodyClass) {
         List<Method> acceptMethods = new ArrayList<Method>();
         for (Method method : bodyClass.getDeclaredMethods()) {
-            if (!method.isBridge() && !method.isSynthetic() && "accept".equals(method.getName())) {
+            if (!method.isBridge() && "accept".equals(method.getName())) {
                 acceptMethods.add(method);
             }
         }
-        if (acceptMethods.size() != 1) {
-            throw new IllegalStateException(String.format("Expected single 'accept' method on body class, found " +
-                    "'%s'", acceptMethods));
+
+        // Prefer real methods when we have the choice.
+        List<Method> realAcceptMethods = new ArrayList<Method>();
+        for(Method method : acceptMethods){
+            if(!method.isSynthetic()){
+                realAcceptMethods.add(method);
+            }
         }
-        return acceptMethods.get(0);
+        if(realAcceptMethods.size() == 1){
+            return acceptMethods.get(0);
+        }
+
+        if(acceptMethods.size() == 1){
+            return acceptMethods.get(0);
+        }
+
+        throw new IllegalStateException(String.format("Expected single 'accept' method on body class, found " +
+                    "'%s'", acceptMethods));
     }
 
     private void verifyNotListOrMap(Type[] argumentTypes) {
