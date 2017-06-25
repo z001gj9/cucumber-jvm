@@ -13,6 +13,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -124,7 +125,10 @@ public class Java8StepDefinition implements StepDefinition {
 
     @Override
     public void execute(final String language, final Object[] args) throws Throwable {
-        Utils.invoke(body, method, timeoutMillis, args);
+        ArrayList list = new ArrayList();
+        list.add(body);
+//        list.addAll(Arrays.asList(args));
+        Utils.invoke(body, method, timeoutMillis, list.toArray());
     }
 
     @Override

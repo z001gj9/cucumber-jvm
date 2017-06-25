@@ -5,62 +5,60 @@ import cucumber.api.Scenario
 import cucumber.api.java8.En
 import org.junit.Assert.*
 
-var lastInstance : LambdaStepdefs? = null
+var lastInstance: LambdaStepdefs? = null
 
 class LambdaStepdefs : En {
 
     init {
-        Before { scenario: Scenario ->
-            assertNotSame(this, lastInstance)
-            lastInstance = this
-        }
+//        Before { scenario: Scenario ->
+//            assertNotSame(this, lastInstance)
+//            lastInstance = this
+//        }
+//
+//        Given("^this data table:$") { peopleTable: DataTable ->
+//            val people = peopleTable.asList(Person::class.java)
+//            assertEquals("Aslak", people[0].first)
+//            assertEquals("Hellesøy", people[0].last)
+//        }
+//
+//        val alreadyHadThisManyCukes = 1
+//        Given("^I have (\\d+) cukes in my belly$") { n: Long ->
+//            assertEquals(1, alreadyHadThisManyCukes)
+//            assertEquals(42L, n)
+//        }
+//
+//        val localState = "hello"
+//        Then("^I really have (\\d+) cukes in my belly") { i: Int ->
+//            assertEquals(42, i)
+//            assertEquals("hello", localState)
+//        }
+//
+//        fun localFunction() = assertTrue(true)
+//
+//        Given("^A statement with a local function$", ::localFunction)
+//        Given("^A statement with an instance function$", this::classFunction)
+        Given("^A statement with a class function (.*)$", LambdaStepdefs::classFunction)
+//
+//        Given("^A statement with a function and and argument(\\d+)$", ::localFunction)
+//
+//        Given("^A statement with a body expression$") { assertTrue(true) }
+//
+//        Given("^A statement with a simple match$", { -> assertTrue(true) })
+//
+//        val localInt = 1
+//        Given("^A statement with a scoped argument$", { assertEquals(2, localInt + 1) })
+//
+//        Given("^I will give you (\\d+) and ([\\d\\.]+) and (\\w+) and (\\d+)$") { a: Int, b: Float, c: String, d: Int ->
+//            assertEquals(1, a)
+//            assertEquals(2.2f, b)
+//            assertEquals("three", c)
+//            assertEquals(4, d)
+//        }
+    }
 
-        Given("^this data table:$") { peopleTable: DataTable ->
-            val people = peopleTable.asList(Person::class.java)
-            assertEquals("Aslak", people[0].first)
-            assertEquals("Hellesøy", people[0].last)
-        }
-
-        val alreadyHadThisManyCukes = 1
-        Given("^I have (\\d+) cukes in my belly$") { n: Long ->
-            assertEquals(1, alreadyHadThisManyCukes)
-            assertEquals(42L, n)
-        }
-
-        val localState = "hello"
-        Then("^I really have (\\d+) cukes in my belly") { i: Int ->
-            assertEquals(42, i)
-            assertEquals("hello", localState)
-        }
-
-            fun executeFunction() {
-                print("Hello 1")
-
-            }
-
-        Given("^A statement with a function$", ::executeFunction)
-
-        fun executeFunction(i : String) {
-            print("Hello 2")
-        }
-
-        Given("^A statement with a function and and argument(\\d+)$", ::executeFunction)
-
-
-
-        Given("^A statement with a body expression$") { assertTrue(true) }
-
-        Given("^A statement with a simple match$", { -> assertTrue(true) })
-
-        val localInt = 1
-        Given("^A statement with a scoped argument$", { assertEquals(2, localInt + 1) })
-
-        Given("^I will give you (\\d+) and ([\\d\\.]+) and (\\w+) and (\\d+)$") { a: Int, b: Float, c: String, d: Int ->
-            assertEquals(1, a)
-            assertEquals(2.2f, b)
-            assertEquals("three", c)
-            assertEquals(4, d)
-        }
+    val classState = "hello"
+    fun classFunction() {
+        assertEquals("hello", classState)
     }
 
     class Person {
