@@ -13,7 +13,6 @@ import cucumber.runtime.java.spring.metaconfig.general.BellyMetaStepdefs;
 import cucumber.runtime.java.spring.contextconfig.BellyStepdefs;
 import cucumber.runtime.java.spring.contextconfig.WithSpringAnnotations;
 import cucumber.runtime.java.spring.contexthierarchyconfig.WithContextHierarchyAnnotation;
-import cucumber.runtime.java.spring.contexthierarchyconfig.WithDifferentContextHierarchyAnnotation;
 import cucumber.runtime.java.spring.dirtiescontextconfig.DirtiesContextBellyStepDefs;
 import cucumber.runtime.java.spring.metaconfig.dirties.DirtiesContextBellyMetaStepDefs;
 import org.junit.Rule;
@@ -242,19 +241,12 @@ public class SpringFactoryTest {
     }
 
     @Test
-    public void shouldAllowClassesWithSameSpringAnnotations() {
+    public void shouldFailIfMultipleClassesWithSpringAnnotationsAreFound() {
+        expectedException.expect(CucumberException.class);
+        expectedException.expectMessage("Glue class class cucumber.runtime.java.spring.contextconfig.BellyStepdefs and class cucumber.runtime.java.spring.contextconfig.WithSpringAnnotations both attempt to configure the spring context");
         final ObjectFactory factory = new SpringFactory();
         factory.addClass(WithSpringAnnotations.class);
         factory.addClass(BellyStepdefs.class);
-    }
-
-    @Test
-    public void shouldFailIfClassesWithDifferentSpringAnnotationsAreFound() {
-        expectedException.expect(CucumberException.class);
-        expectedException.expectMessage("Annotations differs on glue classes found: cucumber.runtime.java.spring.contexthierarchyconfig.WithContextHierarchyAnnotation, cucumber.runtime.java.spring.contexthierarchyconfig.WithDifferentContextHierarchyAnnotation");
-        final ObjectFactory factory = new SpringFactory();
-        factory.addClass(WithContextHierarchyAnnotation.class);
-        factory.addClass(WithDifferentContextHierarchyAnnotation.class);
     }
 
     @Test

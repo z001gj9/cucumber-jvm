@@ -71,11 +71,12 @@ public class SpringFactory implements ObjectFactory {
         if (!stepClasses.contains(stepClass)) {
             checkNoComponentAnnotations(stepClass);
             if (dependsOnSpringContext(stepClass)) {
-                if (stepClassWithSpringContext == null) {
-                    stepClassWithSpringContext = stepClass;
-                } else {
-                    checkAnnotationsEqual(stepClassWithSpringContext, stepClass);
+                if (stepClassWithSpringContext != null) {
+                    throw new CucumberException(String.format("" +
+                        "Glue class %1$s and %2$s both attempt to configure the spring context. Please ensure only one " +
+                        "glue class configures the spring", stepClass, stepClassWithSpringContext));
                 }
+                stepClassWithSpringContext = stepClass;
             }
             stepClasses.add(stepClass);
         }
@@ -113,33 +114,6 @@ public class SpringFactory implements ObjectFactory {
                 }
             }
 
-        }
-        return false;
-    }
-
-
-    private void checkAnnotationsEqual(Class<?> stepClassWithSpringContext, Class<?> stepClass) {
-        Annotation[] annotations1 = stepClassWithSpringContext.getAnnotations();
-        Annotation[] annotations2 = stepClass.getAnnotations();
-        if (annotations1.length != annotations2.length) {
-            throw new CucumberException("Annotations differs on glue classes found: " +
-                    stepClassWithSpringContext.getName() + ", " +
-                    stepClass.getName());
-        }
-        for (Annotation annotation : annotations1) {
-            if (!isAnnotationInArray(annotation, annotations2)) {
-                throw new CucumberException("Annotations differs on glue classes found: " +
-                        stepClassWithSpringContext.getName() + ", " +
-                        stepClass.getName());
-            }
-        }
-    }
-
-    private boolean isAnnotationInArray(Annotation annotation, Annotation[] annotations) {
-        for (Annotation annotationFromArray: annotations) {
-            if (annotation.equals(annotationFromArray)) {
-                return true;
-            }
         }
         return false;
     }
