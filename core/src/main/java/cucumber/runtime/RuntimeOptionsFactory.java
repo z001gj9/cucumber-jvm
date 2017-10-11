@@ -5,6 +5,8 @@ import cucumber.deps.com.thoughtworks.xstream.annotations.XStreamConverter;
 import cucumber.deps.com.thoughtworks.xstream.annotations.XStreamConverters;
 import cucumber.runtime.formatter.PluginFactory;
 import cucumber.runtime.io.MultiLoader;
+import cucumber.util.log.LoggerFactory;
+import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,6 +15,7 @@ import java.util.List;
 import static java.util.Arrays.asList;
 
 public class RuntimeOptionsFactory {
+
     private final Class clazz;
     private boolean featuresSpecified = false;
     private boolean glueSpecified = false;
@@ -44,6 +47,7 @@ public class RuntimeOptionsFactory {
                 addSnippets(options, args);
                 addGlue(options, args);
                 addFeatures(options, args);
+                addVerbose(options, args);
                 addJunitOptions(options, args);
             }
         }
@@ -114,7 +118,7 @@ public class RuntimeOptionsFactory {
     private void addDefaultFeaturePathIfNoFeaturePathIsSpecified(List<String> args, Class clazz) {
         if (!featuresSpecified) {
             args.add(MultiLoader.CLASSPATH_SCHEME + packagePath(clazz));
-        }
+         }
     }
 
     private void addGlue(CucumberOptions options, List<String> args) {
@@ -132,10 +136,15 @@ public class RuntimeOptionsFactory {
         }
     }
 
-
     private void addStrict(CucumberOptions options, List<String> args) {
         if (options.strict()) {
             args.add("--strict");
+        }
+    }
+
+    private void addVerbose(CucumberOptions options, List<String> args) {
+        if (options.verbose()) {
+            args.add("--verbose");
         }
     }
 

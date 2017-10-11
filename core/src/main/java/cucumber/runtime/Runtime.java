@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
  */
 public class Runtime {
 
-    private static final Logger logger = LoggerFactory.getLogger(RunTime.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RunTime.class);
 
     final Stats stats; // package private to be avaiable for tests.
     private final UndefinedStepsTracker undefinedStepsTracker = new UndefinedStepsTracker();
@@ -63,6 +63,16 @@ public class Runtime {
         this.resourceLoader = resourceLoader;
         this.classLoader = classLoader;
         this.runtimeOptions = runtimeOptions;
+        LOGGER.info("Creating Runtime with RuntimeOptions...");
+        LOGGER.info("Feature paths: {}", runtimeOptions.getFeaturePaths());
+        LOGGER.info("Glue: {}", runtimeOptions.getGlue());
+        LOGGER.info("Name filters: {}", runtimeOptions.getNameFilters());
+        LOGGER.info("Tag filters: {}", runtimeOptions.getTagFilters());
+        LOGGER.info("Dry run: {}", runtimeOptions.isDryRun());
+        LOGGER.info("Strict: {}", runtimeOptions.isStrict());
+        LOGGER.info("Monochrome: {}", runtimeOptions.isMonochrome());
+        LOGGER.info("SnippetType: {}", runtimeOptions.getSnippetType());
+        LOGGER.info("JUnitOptions: {}", runtimeOptions.getJunitOptions());
         final Glue glue;
         glue = optionalGlue == null ? new RuntimeGlue(new LocalizedXStreams(classLoader, runtimeOptions.getConverters())) : optionalGlue;
         this.stats = new Stats(runtimeOptions.isMonochrome());
@@ -96,7 +106,7 @@ public class Runtime {
      * This is the main entry point. Used from CLI, but not from JUnit.
      */
     public void run() throws IOException {
-        logger.info("Run started");
+        LOGGER.info("Run started from CLI");
         // Make sure all features parse before initialising any reporters/formatters
         List<CucumberFeature> features = runtimeOptions.cucumberFeatures(resourceLoader, bus);
 
