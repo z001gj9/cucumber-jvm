@@ -6,7 +6,7 @@ cache:
   directories:
     - $HOME/.m2
 before_cache:
-  - rm -f $HOME/.m2/repository/io/cucumber
+  - rm -rf $HOME/.m2/repository/io/cucumber
 
 before_install:
   - wget http://apache.claz.org/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz
@@ -18,50 +18,51 @@ before_install:
 
 jobs:
   include:
-    # Stage Test - Job 1-2:  Builds against all available Jdks.
-    - stage: test
-      jdk: openjdk7
-      script: mvn -q install
-    - jdk: oraclejdk8
-      script: mvn -q install
-      after_success:
-        - mvn clean cobertura:cobertura coveralls:report -P coveralls.io
-    # Stage Test - Job 3: Build java and scala doc
-    - jdk: oraclejdk8
-      env: JAVADOC=true
-      script:
-        - mvn clean install -DskipTests=true
-        - mvn javadoc:aggregate
-    # Stage Test - Job 4: Build Android Examples.
-    - jdk: oraclejdk8
-      env: ANDROID_EXAMPLES=true
-      language: android
-      android:
-        components:
-          - tools
-          - platform-tools
-          - tools # Note that the tools section appears twice on purpose as it’s required to get the newest Android SDK tools.
-          - build-tools-26.0.0
-          - android-21
-          - sys-img-armeabi-v7a-android-21
-      before_install:
-        # Keep android version in sync with  platform.sdk in android-examples.pom.
-        - echo no | android create avd --force -n test -t android-21 --abi armeabi-v7a
-        # Create and start the emulator. This takes some time.
-        - emulator -avd test -no-skin -no-audio -no-window &
-      install:
-        # Build the dependencies for the android examples while the emulator starts.
-        - mvn -q install --also-make --projects android,picocontainer -DskipTests=true -Dmaven.javadoc.skip=true
-      before_script:
-        - android-wait-for-emulator
-      script:
-        # Run Android tests without put. Travis will stop the build if it receives no output for 10 minutes.
-        - mvn install --activate-profiles android-examples --projects examples/android --also-make-dependents -Dandroid.device=test
+#    # Stage Test - Job 1-2:  Builds against all available Jdks.
+#    - jdk: oraclejdk8
+#      script: mvn -q install
+#      after_success:
+#        - mvn clean cobertura:cobertura coveralls:report -P coveralls.io
+#    # Stage Test - Job 3: Build java doc
+#    - jdk: oraclejdk8
+#      env: JAVADOC=true
+#      script:
+#        - mvn clean install -DskipTests=true
+#        - mvn javadoc:aggregate
+#    # Stage Test - Job 4: Build Android Examples.
+#    - jdk: oraclejdk8
+#      env: ANDROID_EXAMPLES=true
+#      language: android
+#      android:
+#        components:
+#          - tools
+#          - platform-tools
+#          - tools # Note that the tools section appears twice on purpose as it’s required to get the newest Android SDK tools.
+#          - build-tools-26.0.0
+#          - android-21
+#          - sys-img-armeabi-v7a-android-21
+#      before_install:
+#        # Keep android version in sync with  platform.sdk in android-examples.pom.
+#        - echo no | android create avd --force -n test -t android-21 --abi armeabi-v7a
+#        # Create and start the emulator. This takes some time.
+#        - emulator -avd test -no-skin -no-audio -no-window &
+#      install:
+#        # Build the dependencies for the android examples while the emulator starts.
+#        - mvn -q install --also-make --projects android,picocontainer -DskipTests=true -Dmaven.javadoc.skip=true
+#      before_script:
+#        - android-wait-for-emulator
+#      script:
+#        # Run Android tests without put. Travis will stop the build if it receives no output for 10 minutes.
+#        - mvn install --activate-profiles android-examples --projects examples/android --also-make-dependents -Dandroid.device=test
 
-    # Stage Deploy - Job 1: Builds and deploys all artifacts with java 8.
+    # Stage Deploy - Job 1: Builds and deploys all artifacts.
     - stage: deploy
       jdk: oraclejdk8
-      script: mvn -q deploy --settings .travis-settings.xml -Dno.gem.deploy=true -DskipTests=true -Dmaven.javadoc.skip=true
+      before_script: ./continuous-deployment/before-deploy.sh
+      script: ./continuous-deployment/deploy.sh
+      on:
+        repo: cucumber/cucumber-jvm
+
 
 env:
   global:
@@ -73,7 +74,16 @@ env:
       BEsHVhETHrO8vR/7huN3MUMQQKZycZgJ+sWszwQPnwaGJEm6ptssJn/LsiUJ
       K/qQhjdpmPiKZIoTruG4E3vc+adT/B2VcHD0897jNeUBoDd7Vj4vzOH6ePID
       969vCnA+6hpQuIM02R+4OJIBPXVtr1Ix/ye+KxS69cJ5N8QyTfY=
+  - secure: |-
+      TJZOc+hwnWn5IeXpreX2EsOggELl4Kvd4/0rIkPuNQv8xFUJK9Q+Hjk6BoFv
+      jALTczwMz0efGfkMtEkuSpRV+cAnAe2LCr039njrLQHBk2mTpUN64efHvods
+      YZgT1HMWwi8D8H8tt0Fypm1N3iWggaKt1gnnUAqC7aTTozdBb6g=
+  - secure: |-
+      Tnh96XCKw4XEBRutQz3dmLWMDPHT8/HnYEnexJdS+XckpBT5LgejaUrxMFGs
+      kgRi/uxJiVcQVo73WvSFXSWLkWqOK0FhapE8aJiBx3rM+TeKsjLSMseqFj+3
+      XbYjdj0u7iR+oGLrs1bAnj9pNSvi9AxShR7LY0AvMkaYR9BJeMk="
 
 branches:
   only:
   - master
+  - /^v\d+\.\d+\.\d+(-\S*)?$/
